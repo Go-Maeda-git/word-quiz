@@ -2,386 +2,268 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>英単語 品詞クイズ (v3)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英単語 品詞クイズ (例文付き)</title>
     <style>
-        /* Reset and Basic Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            height: 100%; /* Ensure body takes full height */
-        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+            font-family: sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Content starts from top */
-            background-color: #f0f2f5;
-            color: #1c1e21;
-            padding: 20px 15px; /* Add some padding to the body */
-            -webkit-tap-highlight-color: rgba(0,0,0,0); /* Remove tap highlight on iOS */
-        }
-
-        .container {
-            background-color: #ffffff;
+            margin: 0;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #f0f2f6;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 450px; /* Max width for larger screens */
+            max-width: 600px;
             text-align: center;
         }
-
         h1 {
-            font-size: 1.5em; /* Adjusted for mobile */
-            color: #1c1e21;
+            color: #1E90FF;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #1E90FF;
+            font-size: 2.5em;
+            margin: 20px 0;
+        }
+        .question-info {
+            font-size: 0.9em;
+            color: #555;
             margin-bottom: 20px;
-            font-weight: 600;
         }
-
-        .question-area {
-            margin-bottom: 20px;
-        }
-
-        .question-number {
-            font-size: 0.8em;
-            color: #606770;
-            margin-bottom: 8px;
-        }
-
-        .word-display {
-            font-size: clamp(1.5em, 5vw, 2em); /* Responsive font size */
-            font-weight: 700;
-            color: #007bff; /* A common blue color */
-            margin-bottom: 25px;
-            padding: 15px 10px;
-            background-color: #e9ecef;
-            border-radius: 8px;
-            min-height: 60px; /* Ensure space for the word */
+        .buttons-container {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.3;
-            word-break: break-word; /* Help with long words */
-        }
-
-        .choices {
-            display: grid; /* Using grid for more robust layout */
-            grid-template-columns: 1fr 1fr; /* Two equal columns */
-            gap: 10px; /* Space between buttons */
+            justify-content: space-around;
             margin-bottom: 20px;
         }
-
-        .choices button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 14px 10px;
+        button {
+            padding: 12px 20px;
             font-size: 1em;
-            font-weight: 500;
-            border-radius: 8px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.15s ease-in-out, transform 0.1s ease;
-            -webkit-appearance: none; /* Remove default iOS button styling */
-            appearance: none;
+            background-color: #1E90FF;
+            color: white;
+            transition: background-color 0.3s ease;
+            min-width: 120px;
         }
-
-        .choices button:hover {
-            background-color: #0056b3;
+        button:hover {
+            background-color: #0073e6;
         }
-        .choices button:active { /* For tap feedback */
-            transform: scale(0.98);
-            background-color: #004a99;
-        }
-
-        .choices button:disabled {
-            background-color: #ced4da;
-            color: #6c757d;
+        button:disabled {
+            background-color: #ccc;
             cursor: not-allowed;
-            transform: none;
         }
-
-        .feedback-area {
+        .feedback {
             margin-top: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.95em;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+        .feedback.correct {
+            background-color: #e6ffed;
+            border: 1px solid #5cb85c;
+            color: #3c763d;
+        }
+        .feedback.incorrect {
+            background-color: #f2dede;
+            border: 1px solid #d9534f;
+            color: #a94442;
+        }
+        .feedback-details {
             text-align: left;
+            margin-top: 10px;
         }
-        .feedback-area.correct {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .feedback-details p {
+            margin: 8px 0;
         }
-        .feedback-area.incorrect {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .next-button-container {
+            margin-top: 20px;
         }
-        .feedback-area p {
-            margin: 5px 0;
+        .results-container {
+            margin-top: 30px;
         }
-        .feedback-area p:first-child {
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #eee;
+            margin: 25px 0;
+        }
+        strong { /* 例文中の太字用 */
             font-weight: bold;
-        }
-
-
-        .action-button { /* Common class for next and restart buttons */
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            font-size: 1em;
-            font-weight: 500;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.15s ease-in-out, transform 0.1s ease;
-            margin-top: 20px;
-            width: 100%;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        .action-button:hover {
-            background-color: #218838;
-        }
-        .action-button:active {
-            transform: scale(0.98);
-            background-color: #1e7e34;
-        }
-
-        .results-area {
-            margin-top: 20px;
-        }
-        .results-area h2 {
-            font-size: 1.3em;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-        .results-area p {
-            font-size: 1em;
-            margin-bottom: 8px;
-        }
-
-        .hidden {
-            display: none !important; /* Use !important to ensure it's hidden */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📚 英単語 品詞クイズ</h1>
+        <h1>📚 英単語 品詞クイズ (例文付き)</h1>
+        <p>表示された英単語が「接続詞」か「前置詞」かを選んでください。</p>
+        <hr>
 
         <div id="quiz-area">
-            <div class="question-area">
-                <p class="question-number" id="question-number"> </p> <!-- Placeholder for height -->
-                <div class="word-display" id="word-display">読み込み中...</div>
+            <div id="question-container">
+                <p class="question-info" id="question-counter"></p>
+                <h2 id="word-display">単語</h2>
+                <hr>
+                <div class="buttons-container">
+                    <button id="conj-button" onclick="checkAnswer('接続詞')">接続詞</button>
+                    <button id="prep-button" onclick="checkAnswer('前置詞')">前置詞</button>
+                </div>
             </div>
 
-            <div class="choices">
-                <button id="choice-conj">接続詞</button>
-                <button id="choice-prep">前置詞</button>
+            <div id="feedback-container" class="feedback" style="display: none;">
+                <p id="feedback-text"></p>
+                <div class="feedback-details">
+                    <p><strong>意味:</strong> <span id="meaning-text"></span></p>
+                    <p><strong>例文:</strong> <span id="example-text"></span></p>
+                </div>
             </div>
 
-            <div class="feedback-area hidden" id="feedback-area">
-                <p id="feedback-message"></p>
-                <p id="feedback-meaning"></p>
-                <p id="feedback-type"></p>
+            <div id="next-button-area" class="next-button-container" style="display: none;">
+                <button id="next-btn" onclick="nextQuestion()">次の問題へ</button>
             </div>
-
-            <button class="action-button hidden" id="next-button">次の問題へ</button>
         </div>
 
-        <div class="results-area hidden" id="results-area">
+        <div id="results-area" class="results-container" style="display: none;">
             <h2>🎉 クイズ終了！ 🎉</h2>
-            <p id="score-message"></p>
-            <p id="accuracy-message"></p>
-            <button class="action-button" id="restart-button">もう一度挑戦する</button>
+            <h3>あなたの成績:</h3>
+            <p id="total-questions-text"></p>
+            <p id="correct-answers-text"></p>
+            <p id="accuracy-text"></p>
+            <hr>
+            <button onclick="restartQuiz()">もう一度挑戦する</button>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // For debugging on devices that might not have an easy console
-            // function mobileLog(message) {
-            //     const logContainer = document.getElementById('mobile-log');
-            //     if (logContainer) {
-            //         const p = document.createElement('p');
-            //         p.textContent = new Date().toLocaleTimeString() + ': ' + message;
-            //         logContainer.appendChild(p);
-            //     }
-            // }
-            // mobileLog("DOM Content Loaded");
+        const wordDataList = [
+            {"word": "when", "meaning": "〜するとき", "type": "接続詞", "example": "I'll call you <strong>when</strong> I get home."},
+            {"word": "while", "meaning": "〜する間に、〜する一方で", "type": "接続詞", "example": "<strong>While</strong> I was cooking, my friend arrived. / He likes coffee, <strong>while</strong> she prefers tea."},
+            {"word": "as soon as", "meaning": "〜するとすぐに", "type": "接続詞", "example": "Please contact me <strong>as soon as</strong> you receive this message."},
+            {"word": "once", "meaning": "いったん〜したら", "type": "接続詞", "example": "<strong>Once</strong> you understand the rules, the game is easy."},
+            {"word": "if", "meaning": "もし〜するなら", "type": "接続詞", "example": "<strong>If</strong> it rains tomorrow, we will cancel the picnic."},
+            {"word": "unless", "meaning": "〜しない限り", "type": "接続詞", "example": "You won't pass the exam <strong>unless</strong> you study hard."},
+            {"word": "because", "meaning": "〜なので", "type": "接続詞", "example": "She was late <strong>because</strong> her train was delayed."},
+            {"word": "now that", "meaning": "今はもう〜なので", "type": "接続詞", "example": "<strong>Now that</strong> the semester is over, I can relax."},
+            {"word": "so that", "meaning": "〜するように", "type": "接続詞", "example": "He studies hard <strong>so that</strong> he can enter a good university."},
+            {"word": "though/although", "meaning": "〜にもかかわらず", "type": "接続詞", "example": "<strong>Although</strong> it was raining, they went for a walk."},
+            {"word": "even though", "meaning": "〜にもかかわらず", "type": "接続詞", "example": "<strong>Even though</strong> he was tired, he continued working."},
+            {"word": "whenever", "meaning": "〜するときはいつでも", "type": "接続詞", "example": "You can visit me <strong>whenever</strong> you are free."},
+            {"word": "even if", "meaning": "例え〜しても", "type": "接続詞", "example": "I will go to the party <strong>even if</strong> I'm not invited."},
+            {"word": "provided that", "meaning": "〜という条件で", "type": "接続詞", "example": "You can borrow the book, <strong>provided that</strong> you return it by next week."},
+            {"word": "despite", "meaning": "〜にもかかわらず", "type": "前置詞", "example": "<strong>Despite</strong> the heavy traffic, we arrived on time."},
+            {"word": "given", "meaning": "〜を考慮に入れると", "type": "前置詞", "example": "<strong>Given</strong> his age, his performance was remarkable."},
+            {"word": "during", "meaning": "〜の間", "type": "前置詞", "example": "Please remain seated <strong>during</strong> the performance."},
+            {"word": "due to", "meaning": "〜が原因で", "type": "前置詞", "example": "The match was postponed <strong>due to</strong> bad weather."},
+            {"word": "owing to", "meaning": "〜が理由で", "type": "前置詞", "example": "<strong>Owing to</strong> a lack of funds, the project was abandoned."},
+            {"word": "because of", "meaning": "〜が原因で", "type": "前置詞", "example": "We couldn't go out <strong>because of</strong> the strong wind."},
+            {"word": "instead of", "meaning": "〜の代わりに", "type": "前置詞", "example": "Would you like tea <strong>instead of</strong> coffee?"},
+            {"word": "in spite of", "meaning": "〜にもかかわらず", "type": "前置詞", "example": "<strong>In spite of</strong> the pain, he finished the race."},
+            {"word": "prior to", "meaning": "〜より前に", "type": "前置詞", "example": "All luggage must be checked in <strong>prior to</strong> boarding."},
+            {"word": "thanks to", "meaning": "〜のおかげで", "type": "前置詞", "example": "<strong>Thanks to</strong> your help, we completed the task successfully."},
+            {"word": "in the event of", "meaning": "〜の場合", "type": "前置詞", "example": "<strong>In the event of</strong> an emergency, please call this number."},
+            {"word": "in addition to", "meaning": "〜に加えて", "type": "前置詞", "example": "<strong>In addition to</strong> his salary, he receives a bonus."},
+            {"word": "except for", "meaning": "〜を除いて", "type": "前置詞", "example": "Everyone passed the exam <strong>except for</strong> him."},
+            {"word": "regardless of", "meaning": "〜とは無関係に", "type": "前置詞", "example": "The law applies to everyone, <strong>regardless of</strong> their status."},
+        ];
 
-            const wordDataList = [
-                { word: "when", meaning: "〜するとき", type: "接続詞" },
-                { word: "while", meaning: "〜する間に、〜する一方で", type: "接続詞" },
-                { word: "as soon as", meaning: "〜するとすぐに", type: "接続詞" },
-                { word: "once", meaning: "いったん〜したら", type: "接続詞" },
-                { word: "if", meaning: "もし〜するなら", type: "接続詞" },
-                { word: "unless", meaning: "〜しない限り", type: "接続詞" },
-                { word: "because", meaning: "〜なので", type: "接続詞" },
-                { word: "now that", meaning: "今はもう〜なので", type: "接続詞" },
-                { word: "so that", meaning: "〜するように", type: "接続詞" },
-                { word: "though/although", meaning: "〜にもかかわらず", type: "接続詞" },
-                { word: "even though", meaning: "〜にもかかわらず", type: "接続詞" },
-                { word: "whenever", meaning: "〜するときはいつでも", type: "接続詞" },
-                { word: "even if", meaning: "例え〜しても", type: "接続詞" },
-                { word: "provided that", meaning: "〜という条件で", type: "接続詞" },
-                { word: "despite", meaning: "〜にもかかわらず", type: "前置詞" },
-                { word: "given", meaning: "〜を考慮に入れると", type: "前置詞" },
-                { word: "during", meaning: "〜の間", type: "前置詞" },
-                { word: "due to", meaning: "〜が原因で", type: "前置詞" },
-                { word: "owing to", meaning: "〜が理由で", type: "前置詞" },
-                { word: "because of", meaning: "〜が原因で", type: "前置詞" },
-                { word: "instead of", meaning: "〜の代わりに", type: "前置詞" },
-                { word: "in spite of", meaning: "〜にもかかわらず", type: "前置詞" },
-                { word: "prior to", meaning: "〜より前に", type: "前置詞" },
-                { word: "thanks to", meaning: "〜のおかげで", type: "前置詞" },
-                { word: "in the event of", meaning: "〜の場合", type: "前置詞" },
-                { word: "in addition to", meaning: "〜に加えて", type: "前置詞" },
-                { word: "except for", meaning: "〜を除いて", type: "前置詞" },
-                { word: "regardless of", meaning: "〜とは無関係に", type: "前置詞" },
-            ];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let shuffledWords = [];
 
-            let shuffledWords = [];
-            let currentQuestionIndex = 0;
-            let score = 0;
+        // DOM Elements
+        const quizArea = document.getElementById('quiz-area');
+        const resultsArea = document.getElementById('results-area');
+        const wordDisplay = document.getElementById('word-display');
+        const questionCounter = document.getElementById('question-counter');
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackText = document.getElementById('feedback-text');
+        const meaningText = document.getElementById('meaning-text');
+        const exampleText = document.getElementById('example-text');
+        const nextButtonArea = document.getElementById('next-button-area');
+        const conjButton = document.getElementById('conj-button');
+        const prepButton = document.getElementById('prep-button');
 
-            // Element selectors
-            const questionNumberEl = document.getElementById('question-number');
-            const wordDisplayEl = document.getElementById('word-display');
-            const choiceConjButton = document.getElementById('choice-conj');
-            const choicePrepButton = document.getElementById('choice-prep');
-            const feedbackAreaEl = document.getElementById('feedback-area');
-            const feedbackMessageEl = document.getElementById('feedback-message');
-            const feedbackMeaningEl = document.getElementById('feedback-meaning');
-            const feedbackTypeEl = document.getElementById('feedback-type');
-            const nextButton = document.getElementById('next-button');
-            const quizAreaEl = document.getElementById('quiz-area');
-            const resultsAreaEl = document.getElementById('results-area');
-            const scoreMessageEl = document.getElementById('score-message');
-            const accuracyMessageEl = document.getElementById('accuracy-message');
-            const restartButton = document.getElementById('restart-button');
-
-            // Check if all essential elements are present
-            const essentialElements = [
-                questionNumberEl, wordDisplayEl, choiceConjButton, choicePrepButton,
-                feedbackAreaEl, feedbackMessageEl, feedbackMeaningEl, feedbackTypeEl,
-                nextButton, quizAreaEl, resultsAreaEl, scoreMessageEl, accuracyMessageEl, restartButton
-            ];
-
-            if (essentialElements.some(el => !el)) {
-                console.error("One or more essential HTML elements are missing. Quiz cannot initialize properly.");
-                if (wordDisplayEl) wordDisplayEl.textContent = "エラー: アプリを初期化できません。";
-                // mobileLog("Error: Essential element missing.");
-                return; // Stop script execution if elements are missing
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
-            // mobileLog("All essential elements found.");
+            return array;
+        }
 
-            function shuffleArray(array) {
-                const newArray = [...array]; // Create a shallow copy
-                for (let i = newArray.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-                }
-                return newArray;
-            }
-
-            function startQuiz() {
-                // mobileLog("startQuiz called");
-                shuffledWords = shuffleArray(wordDataList);
-                currentQuestionIndex = 0;
-                score = 0;
-
-                quizAreaEl.classList.remove('hidden');
-                resultsAreaEl.classList.add('hidden');
-                feedbackAreaEl.classList.add('hidden');
-                nextButton.classList.add('hidden');
-                
-                enableChoiceButtons();
-                loadQuestion();
-            }
-
-            function loadQuestion() {
-                // mobileLog(`loadQuestion: index ${currentQuestionIndex}`);
-                if (currentQuestionIndex < shuffledWords.length) {
-                    const currentWordData = shuffledWords[currentQuestionIndex];
-                    questionNumberEl.textContent = `問題 ${currentQuestionIndex + 1} / ${shuffledWords.length}`;
-                    wordDisplayEl.textContent = currentWordData.word;
-                    
-                    feedbackAreaEl.classList.add('hidden'); // Hide previous feedback
-                    nextButton.classList.add('hidden'); // Hide next button until an answer is given
-                    enableChoiceButtons();
-                } else {
-                    // mobileLog("All questions answered. Showing results.");
-                    showResults();
-                }
-            }
-
-            function handleAnswer(userChoice) {
-                // mobileLog(`handleAnswer: choice ${userChoice}`);
-                disableChoiceButtons();
+        function loadQuestion() {
+            if (currentQuestionIndex < shuffledWords.length) {
                 const currentWordData = shuffledWords[currentQuestionIndex];
-                const correctAnswer = currentWordData.type;
+                wordDisplay.textContent = currentWordData.word;
+                questionCounter.textContent = `問題 ${currentQuestionIndex + 1} / ${shuffledWords.length}`;
+                meaningText.textContent = currentWordData.meaning;
+                exampleText.innerHTML = currentWordData.example; // Use innerHTML to render <strong>
 
-                feedbackAreaEl.classList.remove('hidden');
-                feedbackMeaningEl.innerHTML = `<strong>意味:</strong> ${currentWordData.meaning}`; // Using innerHTML for bold
-                feedbackTypeEl.innerHTML = `<strong>正しい品詞:</strong> ${correctAnswer}`;
-
-                if (userChoice === correctAnswer) {
-                    feedbackMessageEl.textContent = '正解！ 🎉';
-                    feedbackAreaEl.classList.remove('incorrect');
-                    feedbackAreaEl.classList.add('correct');
-                    score++;
-                } else {
-                    feedbackMessageEl.textContent = `残念！不正解です。 (あなたの回答: ${userChoice})`;
-                    feedbackAreaEl.classList.remove('correct');
-                    feedbackAreaEl.classList.add('incorrect');
-                }
-                nextButton.classList.remove('hidden');
+                feedbackContainer.style.display = 'none';
+                nextButtonArea.style.display = 'none';
+                conjButton.disabled = false;
+                prepButton.disabled = false;
+            } else {
+                showResults();
             }
+        }
 
-            function disableChoiceButtons() {
-                choiceConjButton.disabled = true;
-                choicePrepButton.disabled = true;
-            }
+        function checkAnswer(userChoice) {
+            conjButton.disabled = true;
+            prepButton.disabled = true;
 
-            function enableChoiceButtons() {
-                choiceConjButton.disabled = false;
-                choicePrepButton.disabled = false;
-            }
+            const currentWordData = shuffledWords[currentQuestionIndex];
+            const correctType = currentWordData.type;
 
-            function showResults() {
-                // mobileLog("showResults called");
-                quizAreaEl.classList.add('hidden');
-                resultsAreaEl.classList.remove('hidden');
-                
-                scoreMessageEl.textContent = `総問題数: ${shuffledWords.length}問中、正解数: ${score}問`;
-                const accuracy = shuffledWords.length > 0 ? (score / shuffledWords.length) * 100 : 0;
-                accuracyMessageEl.textContent = `正答率: ${accuracy.toFixed(1)}%`;
+            feedbackContainer.style.display = 'block';
+            if (userChoice === correctType) {
+                feedbackText.textContent = `正解！ 🎉 「${currentWordData.word}」は ${correctType} です。`;
+                feedbackContainer.className = 'feedback correct';
+                score++;
+            } else {
+                feedbackText.textContent = `残念！ 「${currentWordData.word}」の正しい品詞は ${correctType} でした。(あなたの回答: ${userChoice})`;
+                feedbackContainer.className = 'feedback incorrect';
             }
+            nextButtonArea.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function showResults() {
+            quizArea.style.display = 'none';
+            resultsArea.style.display = 'block';
+
+            document.getElementById('total-questions-text').textContent = `📖 総問題数: ${shuffledWords.length}`;
+            document.getElementById('correct-answers-text').textContent = `✅ 正解数: ${score}`;
+            const accuracy = shuffledWords.length > 0 ? (score / shuffledWords.length) * 100 : 0;
+            document.getElementById('accuracy-text').textContent = `🎯 正答率: ${accuracy.toFixed(2)}%`;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            shuffledWords = shuffleArray([...wordDataList]); // 配列をコピーしてシャッフル
             
-            // Event Listeners
-            choiceConjButton.addEventListener('click', () => handleAnswer('接続詞'));
-            choicePrepButton.addEventListener('click', () => handleAnswer('前置詞'));
-            nextButton.addEventListener('click', () => {
-                currentQuestionIndex++;
-                loadQuestion();
-            });
-            restartButton.addEventListener('click', startQuiz);
+            resultsArea.style.display = 'none';
+            quizArea.style.display = 'block';
+            loadQuestion();
+        }
 
-            // Initial call to start the quiz
-            // mobileLog("Initializing quiz...");
-            startQuiz();
+        // Initialize quiz
+        document.addEventListener('DOMContentLoaded', () => {
+            restartQuiz();
         });
     </script>
-    <!-- For on-device debugging if console is not accessible -->
-    <!-- <div id="mobile-log" style="position: fixed; bottom: 0; left: 0; width: 100%; max-height: 100px; overflow-y: scroll; background: rgba(0,0,0,0.7); color: white; font-size: 10px; z-index: 9999;"></div> -->
-<!-- HTMLのbody終了タグの直前などに追加 -->
-<div id="debug-output" style="position:fixed; bottom:0; left:0; width:100%; height:100px; max-height:30vh; overflow-y:scroll; background:rgba(0,0,0,0.8); color:lime; font-size:10px; z-index:10000; padding:5px; box-sizing:border-box; border-top: 1px solid #444;"></div>
 </body>
 </html>
